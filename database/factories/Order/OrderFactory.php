@@ -6,9 +6,6 @@ use App\Models\Order\Order;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
- */
 class OrderFactory extends Factory
 {
     protected $model = Order::class;

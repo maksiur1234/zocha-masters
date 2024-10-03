@@ -16,6 +16,22 @@ const fetchProducts = async () => {
     }
 }
 
+const addToCart = async (product) => {
+    try {
+        const response = await axios.post('/cart/add', {
+            product_id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+        });
+
+        alert('Produkt dodany do koszyka!')
+    } catch (error) {
+        console.error(error);
+        console.error('Wystąpił błąd przy dodawaniu do koszyka.');
+    }
+}
+
 onMounted(() => {
     fetchProducts();
 })
@@ -48,7 +64,9 @@ onMounted(() => {
                             <a :href="`/product/${product.id}`" class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded text-center">
                                 Zobacz szczegóły
                             </a>
-                            <button class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded">
+                            <button 
+                                @click="addToCart(product)"
+                                class="mt-4 w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded">
                                 Dodaj do koszyka
                             </button>
                         </div>

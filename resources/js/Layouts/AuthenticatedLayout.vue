@@ -1,13 +1,33 @@
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import { Link } from '@inertiajs/vue3';
+import axios from 'axios';
 
 const showingNavigationDropdown = ref(false);
+const cart = ref({});
+const getCart = async () => {
+    try {
+        const response = await axios.get('/cart-data');
+        cart.value = response.data;
+    } catch (error) {
+        console.error('Błąd podczas pobierania koszyka:', error);
+    }
+}
+
+const cartItemCount = computed(() => {
+    return Object.values(cart.value).reduce((total, item) => {
+        return total + (item.quantity || 0); 
+    }, 0);
+});
+
+onMounted(() => {
+    getCart();
+})
 </script>
 
 <template>
@@ -62,6 +82,68 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                            
+                            <div class="relative ms-3">
+                                <Dropdown align="right" width="48">
+                                    <template #trigger>
+                                        <span class="inline-flex rounded-md">
+                                            <button
+                                                type="button"
+                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                            >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                            </svg>
+
+                                            <span class="absolute top-0 right-0 bg-red-600 text-white rounded-full text-xs px-1">
+                                                {{ cartItemCount }}
+                                            </span>
+                                                 Koszyk
+
+                                                <svg
+                                                    class="-me-0.5 ms-2 h-4 w-4"
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    viewBox="0 0 20 20"
+                                                    fill="currentColor"
+                                                >
+                                                    <path
+                                                        fill-rule="evenodd"
+                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                        clip-rule="evenodd"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </span>
+                                    </template>
+
+                                    <template #content>
+                                        <div class="p-4">
+                                            <span class="text-slate-200 font-semibold">Zawartość koszyka:</span>
+                                            <div v-if="cartItemCount === 0" class="text-slate-200">Koszyk jest pusty.</div>
+                                            <div v-else>
+                                                <div class="mb-4 text-slate-200">
+                                                    Ilość przedmiotów w koszyku: <strong>{{ cartItemCount }}</strong>
+                                                </div>
+                                                <ul class="list-disc pl-5 space-y-2">
+                                                    <li v-for="item in cart" :key="item.id" class="flex items-center justify-between border-b pb-2">
+                                                        <div class="flex items-center">
+                                                            <img :src="item.image" alt="" class="h-16 w-16 object-cover mr-2"> 
+                                                            <div>
+                                                                <div class="font-medium text-slate-200">{{ item.name }}</div>
+                                                                <div class="text-slate-200">Ilość: {{ item.quantity }}</div>
+                                                            </div>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                                <DropdownLink class="mt-2">Przejdź do płatności</DropdownLink>
+                                                <DropdownLink :href="route('cart')" method="get" as="button" class="mt-2 inline-block">
+                                                    Przejdź do koszyka
+                                                </DropdownLink>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </Dropdown>
+                            </div>
                             <!-- Settings Dropdown -->
                             <div class="relative ms-3">
                                 <Dropdown align="right" width="48">
@@ -93,14 +175,14 @@ const showingNavigationDropdown = ref(false);
                                         <DropdownLink
                                             :href="route('profile.edit')"
                                         >
-                                            Profile
+                                            Profil
                                         </DropdownLink>
                                         <DropdownLink
                                             :href="route('logout')"
                                             method="post"
                                             as="button"
                                         >
-                                            Log Out
+                                            Wyloguj się
                                         </DropdownLink>
                                     </template>
                                 </Dropdown>

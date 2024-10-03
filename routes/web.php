@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Blog\BlogPostController;
+use App\Http\Controllers\Cart\CartController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Shop\ProductController;
 use Illuminate\Foundation\Application;
@@ -32,8 +33,16 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/blog', function () {
         return Inertia::render('Blog/Posts');
     })->name('blog');
+
+    Route::get('/add-post', [BlogPostController::class, 'newPost'])->name('addPost');
+    Route::post('/store-post', [BlogPostController::class, 'store'])->name('storePost');
     Route::get('/posts',[BlogPostController::class, 'index']);
     Route::get('/post/{id}', [BlogPostController::class, 'details'])->name('post.details');
+
+    Route::get('/cart',[CartController::class, 'index'])->name('cart');
+    Route::get('/cart-data',[CartController::class, 'data'])->name('cartData');
+    Route::post('/cart/add',[CartController::class, 'add']);
+    Route::delete('/cart/remove/{productId}', [CartController::class, 'delete']);
 });
 
 Route::middleware('auth')->group(function () {

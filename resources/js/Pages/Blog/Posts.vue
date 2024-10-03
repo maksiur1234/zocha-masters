@@ -36,7 +36,9 @@ onMounted(() => {
                     <h3 class="text-2xl font-semibold text-white">Posty</h3>
                 </div>
                 <div class="bg-slate-800 py-4 mb-6">
-                        <button class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded">Dodaj post</button>
+                    <a href="/add-post" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded">
+                        Dodaj post
+                    </a>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     <div v-for="post in posts" :key="post.id" class="bg-slate-400 shadow-lg rounded-lg overflow-hidden">

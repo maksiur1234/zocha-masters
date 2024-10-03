@@ -5,9 +5,6 @@ namespace Database\Factories\Category;
 use App\Models\Category\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
- */
 class CategoryFactory extends Factory
 {
     protected $model = Category::class;
