@@ -1,7 +1,11 @@
 <?php
 
+use App\Http\Controllers\Address\AddressController;
 use App\Http\Controllers\Blog\BlogPostController;
 use App\Http\Controllers\Cart\CartController;
+use App\Http\Controllers\Order\OrderController;
+use App\Http\Controllers\Payment\PaymentController;
+use App\Http\Controllers\Payment\Stripe\StripeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Shop\ProductController;
 use Illuminate\Foundation\Application;
@@ -43,6 +47,16 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/cart-data',[CartController::class, 'data'])->name('cartData');
     Route::post('/cart/add',[CartController::class, 'add']);
     Route::delete('/cart/remove/{productId}', [CartController::class, 'delete']);
+    
+    Route::get('/place-order-address', [OrderController::class, 'addressForm']);
+    Route::get('/place-order-delivery', [OrderController::class, 'deliveryForm']);
+
+    Route::get('/place-order-payment', [PaymentController::class, 'index'])->name('payment-index');
+
+    Route::post('/store-address', [AddressController::class, 'store']);
+
+    Route::get('/success', [StripeController::class, 'checkout'])->name('success');
+    Route::post('/checkout', [StripeController::class, 'checkout'])->name('checkout');
 });
 
 Route::middleware('auth')->group(function () {

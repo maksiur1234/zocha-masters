@@ -17,8 +17,9 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => User::factory(), // Tworzy nowego użytkownika
+            'user_id' => User::factory(), 
             'total_price' => $this->faker->numberBetween(1000, 10000),
+            'address_id' => $this->faker->numberBetween(1, 1000),
         ];
     }
 }

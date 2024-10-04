@@ -18,9 +18,7 @@ const addPost = async () => {
     try {
         await getToken();
         await axios.post('/store-post', form.value);
-        // Możesz dodać tu logikę na sukces, np. przekierowanie lub wyświetlenie komunikatu.
     } catch (error) {
-        // Logika w przypadku błędu.
         console.error("Błąd podczas dodawania posta:", error);
     }
 };
@@ -40,7 +38,6 @@ const addPost = async () => {
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-slate-800 shadow-lg rounded-lg overflow-hidden p-6">
                     <div class="flex flex-col">
-                        <!-- Zmieniamy @submit.prevent aby powiązać z funkcją addPost -->
                         <form @submit.prevent="addPost">
                             <div>
                                 <label>Tytuł: </label>

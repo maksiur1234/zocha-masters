@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
-import axios from 'axios'; // Dodaj import axios
+import axios from 'axios'; 
 
 const posts = ref([]);
 

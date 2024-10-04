@@ -33,9 +33,9 @@
                             <p class="text-xl text-slate-200 font-bold">{{ totalPrice }} PLN</p>
                         </div>
                         <div class="mt-4">
-                            <button @click="proceedToCheckout" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                                Przejdź do kasy
-                            </button>
+                            <a href="/place-order-address" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                Przejdź do płatności
+                            </a>
                         </div>
                     </div>
                 </div>

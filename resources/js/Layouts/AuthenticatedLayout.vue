@@ -135,7 +135,6 @@ onMounted(() => {
                                                         </div>
                                                     </li>
                                                 </ul>
-                                                <DropdownLink class="mt-2">Przejdź do płatności</DropdownLink>
                                                 <DropdownLink :href="route('cart')" method="get" as="button" class="mt-2 inline-block">
                                                     Przejdź do koszyka
                                                 </DropdownLink>
