@@ -42,6 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/store-post', [BlogPostController::class, 'store'])->name('storePost');
     Route::get('/posts',[BlogPostController::class, 'index']);
     Route::get('/post/{id}', [BlogPostController::class, 'details'])->name('post.details');
+    Route::get('/post/{id}/edit', [BlogPostController::class, 'editView'])->name('post.detailsEdit');
+    Route::put('/post/edit/{id}', [BlogPostController::class, 'edit'])->name('post.details');
+    Route::delete('/post/{id}/delete', [BlogPostController::class, 'delete'])->name('post.delete');
 
     Route::get('/cart',[CartController::class, 'index'])->name('cart');
     Route::get('/cart-data',[CartController::class, 'data'])->name('cartData');

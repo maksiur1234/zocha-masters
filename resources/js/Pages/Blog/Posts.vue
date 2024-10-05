@@ -1,28 +1,5 @@
-<script setup>
-import { ref, onMounted } from 'vue';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import axios from 'axios'; 
-
-const posts = ref([]);
-
-const fetchPosts = async () => {
-    try {
-        const response = await axios.get('/posts');
-        posts.value = response.data;
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-onMounted(() => {
-    fetchPosts();
-});
-</script>
-
 <template>
     <Head title="Blog - Zocha Masters" />
-
     <AuthenticatedLayout>
         <template #header>
             <h2 class="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
@@ -47,10 +24,25 @@ onMounted(() => {
                             <p class="text-black-700 mt-2">{{ post.excerpt }}</p>
                             <p class="text-gray-500 mt-2 text-sm">Dodano: {{ new Date(post.created_at).toLocaleDateString() }}</p>
                             <p class="text-gray-500 mt-2 text-sm">Autor: {{ post.user_id }}</p>
-                            <div class="mt-4">
-                                <a :href="`/post/${post.id}`" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-                                    Wyświetl szczegóły
+                            <div class="mt-4 flex space-x-2">
+                                <a :href="`/post/${post.id}`" class="m-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded flex items-center space-x-1">
+                                    <i class="fas fa-eye"></i>
+                                    <span>Wyświetl</span>
                                 </a>
+
+                                <a v-if="post.user_id === user.id" :href="`/post/${post.id}/edit`" class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded flex items-center space-x-1">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Edytuj</span>
+                                </a>
+
+                                <button 
+                                    v-if="post.user_id === user.id" 
+                                    @click="confirmDelete(post.id)" 
+                                    class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded flex items-center space-x-1"
+                                >
+                                    <i class="fas fa-trash"></i>
+                                    <span>Usuń</span>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -59,3 +51,40 @@ onMounted(() => {
         </div>
     </AuthenticatedLayout>
 </template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head, usePage } from '@inertiajs/vue3';
+import axios from 'axios'; 
+
+const posts = ref([]);
+const page = usePage();
+const user = page.props.auth.user;
+
+const fetchPosts = async () => {
+    try {
+        const response = await axios.get('/posts');
+        posts.value = response.data;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
+const confirmDelete = async (postId) => {
+    const confirmed = confirm("Czy na pewno chcesz usunąć ten post?");
+    if (confirmed) {
+        try {
+            await axios.delete(`/post/${postId}/delete`);
+            
+            window.location.href = '/blog'; 
+        } catch (error) {
+            console.error("Błąd podczas usuwania posta:", error);
+        }
+    }
+};
+
+onMounted(() => {
+    fetchPosts();
+});
+</script>

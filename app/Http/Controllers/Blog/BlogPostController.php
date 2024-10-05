@@ -44,9 +44,41 @@ class BlogPostController extends Controller
 
         try {
             $this->blogPostRepo->savePost($validatedPost);
+            return response()->json(['message' => 'Saved sucesfully']);
         } catch (\Exception $e) {
             Log::error("Error in addding new post: ". $e->getMessage());
         }
         
+    }
+
+    public function editView($id)
+    {
+        $post = BlogPost::findOrFail($id); 
+
+        return Inertia::render('Blog/PostDetailEdit', [
+            'post' => $post,
+        ]);
+    }
+
+    public function edit(StorePostRequest $storePostRequest, $id)
+    {
+        $validatedPost = $storePostRequest->validated();
+
+        try {
+            $this->blogPostRepo->edit($id, $validatedPost);
+            return response()->json(['message' => 'Updated sucesfully']);
+        } catch (\Exception $e) {
+            Log::error("Error in editing post: ". $e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $this->blogPostRepo->deletePost($id);
+            return response()->json(['message' => 'Delted sucesfully']);
+        } catch (\Exception $e) {
+            Log::error("Error in deleting post: ". $e->getMessage());
+        }
     }
 }
