@@ -73,11 +73,6 @@ onMounted(() => {
                                 >
                                     Sklep
                                 </NavLink>
-
-                                <NavLink
-                                >
-                                    Materiały
-                                </NavLink>
                             </div>
                         </div>
 

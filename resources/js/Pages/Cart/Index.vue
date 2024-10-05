@@ -11,8 +11,8 @@
         <div class="py-12">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
                 <div class="bg-slate-700 shadow-lg rounded-lg p-6">
-                    <div class="grid grid-cols-1 gap-4">
-                        <div v-for="(item, productId) in props.cart" :key="productId" class="flex items-center border-b border-gray-300 pb-4">
+                    <div v-if="cartItemsCount > 0" class="grid grid-cols-1 gap-4">
+                        <div v-for="(item, productId) in cart" :key="productId" class="flex items-center border-b border-gray-300 pb-4">
                             <img :src="item.image" alt="Product Image" class="w-24 h-24 object-cover rounded-md mr-4" />
                             <div class="flex-1 p-6 m-4">
                                 <h3 class="text-lg font-semibold text-slate-100">{{ item.name }}</h3>
@@ -25,18 +25,23 @@
                                 </button>
                             </div>
                         </div>
+
+                        <div class="mt-6 border-t border-gray-300 pt-4">
+                            <div class="flex justify-between">
+                                <h4 class="text-xl text-slate-200 font-semibold">Całkowity koszt:</h4>
+                                <p class="text-xl text-slate-200 font-bold">{{ totalPrice }} PLN</p>
+                            </div>
+                            <div class="mt-4">
+                                <a href="/place-order-address" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+                                    Przejdź do płatności
+                                </a>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mt-6 border-t border-gray-300 pt-4">
-                        <div class="flex justify-between">
-                            <h4 class="text-xl text-slate-200 font-semibold">Całkowity koszt:</h4>
-                            <p class="text-xl text-slate-200 font-bold">{{ totalPrice }} PLN</p>
-                        </div>
-                        <div class="mt-4">
-                            <a href="/place-order-address" class="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                                Przejdź do płatności
-                            </a>
-                        </div>
+                    <div v-else class="text-center text-slate-200">
+                        <h3 class="text-lg font-semibold">Twój koszyk jest pusty.</h3>
+                        <p>Dodaj produkty, aby kontynuować zakupy.</p>
                     </div>
                 </div>
             </div>
@@ -59,8 +64,12 @@ const props = defineProps({
 
 const { cart } = toRefs(props);
 
+const cartItemsCount = computed(() => {
+    return Object.keys(cart.value).length;
+});
+
 const totalPrice = computed(() => {
-    return Object.values(props.cart).reduce((total, item) => {
+    return Object.values(cart.value).reduce((total, item) => {
         return total + (item.price * item.quantity);
     }, 0);
 });
@@ -71,11 +80,7 @@ const removeFromCart = async (productId) => {
 
         delete cart.value[productId];
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
-};
-
-const proceedToCheckout = () => {
-    console.log('do koszyka')
 };
 </script>

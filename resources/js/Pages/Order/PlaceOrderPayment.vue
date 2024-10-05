@@ -16,21 +16,20 @@ const cartTotal = ref(0);
 const getCartData = async () => {
     try {
         const response = await axios.get('/cart-data');
-        const cartData = response.data; // Zwrócone obiekty z koszyka
+        const cartData = response.data; 
 
-        // Zsumuj wartości price
         cartTotal.value = Object.values(cartData).reduce((total, item) => {
-            return total + (parseFloat(item.price) || 0); // Dodaj cenę jako liczbę
+            return total + (parseFloat(item.price) || 0); 
         }, 0);
 
-        totalPrice.value = cartTotal.value; // Ustaw totalPrice na cartTotal
+        totalPrice.value = cartTotal.value; 
     } catch (error) {
         console.error("Błąd podczas pobierania danych koszyka:", error);
     }
 };
 
 onMounted(() => {
-    getCartData(); // Pobierz dane koszyka
+    getCartData(); 
 
     const savedDetails = localStorage.getItem('shippingDetails');
     if (savedDetails) {
@@ -45,23 +44,19 @@ onMounted(() => {
 const getToken = async () => {
     try {
         await axios.get('/sanctum/csrf-cookie');
-        // Token jest automatycznie ustawiany w ciasteczku, nie trzeba go osobno przechowywać w stanie
     } catch (error) {
-        console.error("Błąd przy pobieraniu tokena CSRF:", error);
+        console.error("Failed in getting CSRF:", error);
     }
 };
 
 const savePaymentMethod = async () => {
-    await getToken(); // Pobierz token przed wysłaniem formularza
     localStorage.setItem('paymentMethod', paymentForm.value.payment_method);
     
     try {
-        const response = await axios.post('/checkout');
-        if (response.data) {
-            window.open(response.data.redirect_url); 
-        }
+        await getToken(); 
+         await axios.post('/checkout');
     } catch (error) {
-        console.error("Błąd podczas wysyłania metody płatności:", error);
+        console.error("Error with sending payment:", error);
     }
 };
 </script>
@@ -94,7 +89,7 @@ const savePaymentMethod = async () => {
                     <p>Łączny koszt zamówienia: {{ (totalPrice + (selectedDeliveryData.price || 0)).toFixed(2) }} PLN</p>
 
                     <h2 class="text-xl font-semibold mt-4">Wybierz metodę płatności:</h2>
-                    <form @submit.prevent="savePaymentMethod" method="post" >
+                    <form @submit.prevent="savePaymentMethod" method="post">
                         <div class="mb-4">
                             <label for="payment_method" class="block mb-2">Metoda płatności:</label>
                             <select v-model="paymentForm.payment_method" id="payment_method" required class="border rounded p-2 w-full">

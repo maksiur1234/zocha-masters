@@ -20,7 +20,7 @@ class StripeController extends Controller
         $cart = $request->session()->get('cart', []);
         
         if (empty($cart)) {
-            return redirect()->route('payment-index')->with('error', 'Koszyk jest pusty.');
+            return redirect()->route('payment-index')->with('error', 'Empty card.');
         }
 
         \Stripe\Stripe::setApiKey(config('stripe.sk'));
