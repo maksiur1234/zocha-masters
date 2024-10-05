@@ -43,7 +43,8 @@ onMounted(() => {
 
 const getToken = async () => {
     try {
-        await axios.get('/sanctum/csrf-cookie');
+        const csrf = await axios.get('/sanctum/csrf-cookie');
+        console.log(csrf)
     } catch (error) {
         console.error("Failed in getting CSRF:", error);
     }
@@ -51,10 +52,18 @@ const getToken = async () => {
 
 const savePaymentMethod = async () => {
     localStorage.setItem('paymentMethod', paymentForm.value.payment_method);
-    
+
     try {
-        await getToken(); 
-         await axios.post('/checkout');
+         await getToken(); 
+         const response = await axios.post('/checkout')
+
+         const sessionUrl = response.data.url
+
+         if(sessionUrl){
+            window.location.href = sessionUrl
+         } else {
+            console.error('error with url payment', error)
+         }
     } catch (error) {
         console.error("Error with sending payment:", error);
     }

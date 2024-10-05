@@ -73,6 +73,12 @@ onMounted(() => {
                                 >
                                     Sklep
                                 </NavLink>
+
+                                <NavLink
+                                
+                                >
+                                    Poradniki
+                                </NavLink>
                             </div>
                         </div>
 

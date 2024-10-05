@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Payment\Stripe;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreOrderRequest;
-use App\Models\Address\Address;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -46,7 +44,10 @@ class StripeController extends Controller
             'cancel_url' => route('payment-index'),
         ]);
 
-        return redirect()->away($session->url);
+        return response()->json(['url' => $session->url])
+            ->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Origin, Authorization');
     }
 
     public function success()
