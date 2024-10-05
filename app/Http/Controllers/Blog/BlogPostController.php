@@ -20,7 +20,7 @@ class BlogPostController extends Controller
     }
     public function index()
     {
-        $posts = BlogPost::paginate(10);
+        $posts = BlogPost::paginate(3); 
 
         return response()->json([
             'data' => BlogPostResource::collection($posts),
@@ -29,6 +29,12 @@ class BlogPostController extends Controller
                 'last_page' => $posts->lastPage(),
                 'per_page' => $posts->perPage(),
                 'total' => $posts->total(),
+                'links' => [
+                    'first' => $posts->url(1),
+                    'last' => $posts->url($posts->lastPage()),
+                    'prev' => $posts->previousPageUrl(),
+                    'next' => $posts->nextPageUrl(),
+                ],
             ],
         ]);
     }

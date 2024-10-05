@@ -22,7 +22,7 @@
                         <div class="p-6">
                             <h4 class="text-lg font-bold text-black-900">{{ post.title }}</h4>
                             <p class="text-black-700 mt-2">{{ post.excerpt }}</p>
-                            <p class="text-gray-500 mt-2 text-sm">Dodano: {{ new Date(post.created_at).toLocaleDateString() }}</p>
+                            <p class="text-gray-500 mt-2 text-sm">Dodano: {{ post.created_at }}</p>
                             <p class="text-gray-500 mt-2 text-sm">Autor: {{ post.user_id }}</p>
                             <div class="mt-4 flex space-x-2">
                                 <a :href="`/post/${post.id}`" class="m-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded flex items-center space-x-1">
@@ -47,6 +47,28 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="mt-6 flex justify-center space-x-4">
+                    <button 
+                        v-if="pagination.current_page > 1" 
+                        @click="goToPage(pagination.current_page - 1)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded"
+                    >
+                        Poprzednia
+                    </button>
+                    
+                    <span class="text-gray-700 dark:text-gray-300 font-semibold">
+                        Strona {{ pagination.current_page }} z {{ pagination.last_page }}
+                    </span>
+                    
+                    <button 
+                        v-if="pagination.current_page < pagination.last_page" 
+                        @click="goToPage(pagination.current_page + 1)"
+                        class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded"
+                    >
+                        Następna
+                    </button>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>
@@ -58,14 +80,19 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import { Head, usePage } from '@inertiajs/vue3';
 import axios from 'axios'; 
 
-const posts = ref([]);
 const page = usePage();
 const user = page.props.auth.user;
+const posts = ref({ data: [], current_page: 1, last_page: 1 });
+const pagination = ref({ current_page: 1, last_page: 1 });
 
-const fetchPosts = async () => {
+const fetchPosts = async (pageNumber = 1) => {
     try {
-        const response = await axios.get('/posts');
-        posts.value = response.data;
+        const response = await axios.get(`/posts?page=${pageNumber}`);
+        posts.value = response.data.data;
+        pagination.value = {
+            current_page: response.data.meta.current_page,
+            last_page: response.data.meta.last_page,
+        };
     } catch (error) {
         console.error(error);
     }
@@ -76,15 +103,18 @@ const confirmDelete = async (postId) => {
     if (confirmed) {
         try {
             await axios.delete(`/post/${postId}/delete`);
-            
-            window.location.href = '/blog'; 
+            fetchPosts(pagination.value.current_page); 
         } catch (error) {
             console.error("Błąd podczas usuwania posta:", error);
         }
     }
 };
 
+const goToPage = (page) => {
+    fetchPosts(page);
+};
+
 onMounted(() => {
-    fetchPosts();
+    fetchPosts(); 
 });
 </script>
