@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Blog;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Blog\StorePostRequest;
+use App\Http\Resources\BlogPostResource;
 use App\Models\Blog\BlogPost;
 use App\Repository\Blog\BlogPostRepo;
 use Illuminate\Support\Facades\Log;
@@ -19,10 +20,19 @@ class BlogPostController extends Controller
     }
     public function index()
     {
-        $posts = BlogPost::all();
+        $posts = BlogPost::paginate(10);
 
-        return response()->json($posts);
+        return response()->json([
+            'data' => BlogPostResource::collection($posts),
+            'meta' => [
+                'current_page' => $posts->currentPage(),
+                'last_page' => $posts->lastPage(),
+                'per_page' => $posts->perPage(),
+                'total' => $posts->total(),
+            ],
+        ]);
     }
+
 
     public function details($id)
     {

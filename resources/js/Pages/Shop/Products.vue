@@ -5,36 +5,25 @@ import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 
 const products = ref([]);
+const pagination = ref({});
 
-const fetchProducts = async () => {
+const fetchProducts = async (page = 1) => {
     try {
-        const response = await axios.get('/products');
-        products.value = response.data;
-        console.log(products.value);
+        const response = await axios.get(`/products?page=${page}`);
+        products.value = response.data.data;
+        pagination.value = response.data.meta;
     } catch (error) {
         console.error(error);
     }
-}
+};
 
-const addToCart = async (product) => {
-    try {
-        const response = await axios.post('/cart/add', {
-            product_id: product.id,
-            name: product.name,
-            price: product.price,
-            image: product.image,
-        });
-
-        alert('Produkt dodany do koszyka!')
-    } catch (error) {
-        console.error(error);
-        console.error('Wystąpił błąd przy dodawaniu do koszyka.');
-    }
-}
+const goToPage = (page) => {
+    fetchProducts(page);
+};
 
 onMounted(() => {
     fetchProducts();
-})
+});
 </script>
 
 <template>
@@ -72,6 +61,28 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="mt-6 flex justify-center space-x-4">
+                <button 
+                    v-if="pagination.current_page > 1" 
+                    @click="goToPage(pagination.current_page - 1)"
+                    class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded"
+                    :disabled="pagination.current_page === 1">
+                    Poprzednia
+                </button>
+                
+                <span class="text-gray-700 dark:text-gray-300 font-semibold">
+                    Strona {{ pagination.current_page }} z {{ pagination.last_page }}
+                </span>
+                
+                <button 
+                    v-if="pagination.current_page < pagination.last_page" 
+                    @click="goToPage(pagination.current_page + 1)"
+                    class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded"
+                    :disabled="pagination.current_page === pagination.last_page">
+                    Następna
+                </button>
             </div>
         </div>
     </AuthenticatedLayout>
