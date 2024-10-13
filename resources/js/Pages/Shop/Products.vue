@@ -7,6 +7,21 @@ import axios from 'axios';
 const products = ref([]);
 const pagination = ref({});
 
+const addToCart = async (product) => {
+    try {
+        const response = await axios.post('/cart/add', {
+            product_id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+        });
+        alert('Produkt dodany do koszyka!')
+    } catch (error) {
+        console.error(error);
+        console.error('Wystąpił błąd przy dodawaniu do koszyka.');
+    }
+}
+
 const fetchProducts = async (page = 1) => {
     try {
         const response = await axios.get(`/products?page=${page}`);
